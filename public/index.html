@@ -2,32 +2,92 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<script>
+			(function () {
+				var stored = null;
+				try { stored = localStorage.getItem('theme'); } catch (e) {}
+				var dark = stored ? stored === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+				document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+			})();
+		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Factory Playground</title>
 		<style>
+			:root {
+				--bg: #f6f5f0;
+				--fg: #1c2620;
+				--card-bg: #fffdf6;
+				--card-border: #d8d5c8;
+			}
+			:root[data-theme="dark"] {
+				--bg: #1c2620;
+				--fg: #f0efe8;
+				--card-bg: #24302a;
+				--card-border: #3a463f;
+			}
 			body {
 				font: 16px/1.6 ui-monospace, monospace;
-				background: #f6f5f0;
-				color: #1c2620;
+				background: var(--bg);
+				color: var(--fg);
 				max-width: 640px;
 				margin: 4rem auto;
 				padding: 0 1rem;
+				transition: background-color .15s ease, color .15s ease;
 			}
 			h1 { font-size: 1.6rem; }
+			.header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1rem;
+			}
 			.card {
-				border: 1px solid #d8d5c8;
+				border: 1px solid var(--card-border);
 				border-radius: 10px;
 				padding: 1.2rem 1.4rem;
-				background: #fffdf6;
+				background: var(--card-bg);
 				margin-top: 1.5rem;
+				transition: background-color .15s ease, border-color .15s ease;
+			}
+			#theme-toggle {
+				font: inherit;
+				cursor: pointer;
+				background: var(--card-bg);
+				color: var(--fg);
+				border: 1px solid var(--card-border);
+				border-radius: 6px;
+				padding: 0.3rem 0.7rem;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>Factory Playground</h1>
+		<div class="header">
+			<h1>Factory Playground</h1>
+			<button id="theme-toggle" type="button" aria-pressed="false">🌙 Dark</button>
+		</div>
 		<p>A tiny static site that exists to be improved by the turbodiff software factory.</p>
 		<div class="card">
 			<strong>Status:</strong> serving happily.
 		</div>
+		<script>
+			(function () {
+				var root = document.documentElement;
+				var btn = document.getElementById('theme-toggle');
+				function label(theme) {
+					return theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+				}
+				function apply(theme) {
+					root.setAttribute('data-theme', theme);
+					btn.textContent = label(theme);
+					btn.setAttribute('aria-pressed', String(theme === 'dark'));
+				}
+				apply(root.getAttribute('data-theme') || 'light');
+				btn.addEventListener('click', function () {
+					var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+					apply(next);
+					try { localStorage.setItem('theme', next); } catch (e) {}
+				});
+			})();
+		</script>
 	</body>
 </html>
