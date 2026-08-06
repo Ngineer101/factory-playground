@@ -35,6 +35,7 @@
 				transition: background-color .15s ease, color .15s ease;
 			}
 			h1 { font-size: 1.6rem; }
+			h2 { font-size: 1.15rem; margin: 1.5rem 0 0; }
 			.header {
 				display: flex;
 				align-items: center;
@@ -58,6 +59,42 @@
 				border-radius: 6px;
 				padding: 0.3rem 0.7rem;
 			}
+			.faq-card { padding: 0; }
+			.faq-item + .faq-item { border-top: 1px solid var(--card-border); }
+			.faq-question {
+				display: flex;
+				width: 100%;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1rem;
+				font: inherit;
+				text-align: left;
+				color: var(--fg);
+				background: none;
+				border: 0;
+				cursor: pointer;
+				padding: 1rem 1.4rem;
+			}
+			.faq-icon {
+				transition: transform .15s ease;
+				flex: none;
+			}
+			.faq-question[aria-expanded="true"] .faq-icon { transform: rotate(45deg); }
+			.faq-answer-wrap {
+				display: grid;
+				grid-template-rows: 0fr;
+				transition: grid-template-rows .2s ease;
+			}
+			.faq-question[aria-expanded="true"] + .faq-answer-wrap { grid-template-rows: 1fr; }
+			.faq-answer {
+				overflow: hidden;
+				min-height: 0;
+			}
+			.faq-answer p {
+				margin: 0 1.4rem 1rem;
+				color: var(--fg);
+				opacity: .85;
+			}
 		</style>
 	</head>
 	<body>
@@ -68,6 +105,36 @@
 		<p>A tiny static site that exists to be improved by the turbodiff software factory.</p>
 		<div class="card">
 			<strong>Status:</strong> serving happily.
+		</div>
+		<h2>FAQ</h2>
+		<div class="card faq-card">
+			<div class="faq-item">
+				<button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1" id="faq-question-1">
+					<span>What is the factory playground?</span>
+					<span class="faq-icon" aria-hidden="true">+</span>
+				</button>
+				<div class="faq-answer-wrap" id="faq-answer-1" role="region" aria-labelledby="faq-question-1">
+					<div class="faq-answer"><p>It's a tiny static site that exists to be improved by the turbodiff software factory — a sandbox for demonstrating automated feature generation end to end.</p></div>
+				</div>
+			</div>
+			<div class="faq-item">
+				<button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2" id="faq-question-2">
+					<span>Who builds the features?</span>
+					<span class="faq-icon" aria-hidden="true">+</span>
+				</button>
+				<div class="faq-answer-wrap" id="faq-answer-2" role="region" aria-labelledby="faq-question-2">
+					<div class="faq-answer"><p>Features are generated and implemented automatically by the turbodiff software factory, based on plain-language feature descriptions.</p></div>
+				</div>
+			</div>
+			<div class="faq-item">
+				<button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3" id="faq-question-3">
+					<span>How are changes verified?</span>
+					<span class="faq-icon" aria-hidden="true">+</span>
+				</button>
+				<div class="faq-answer-wrap" id="faq-answer-3" role="region" aria-labelledby="faq-question-3">
+					<div class="faq-answer"><p>Each generated change is reviewed and checked against the page's existing behavior and style before being merged.</p></div>
+				</div>
+			</div>
 		</div>
 		<script>
 			(function () {
@@ -86,6 +153,17 @@
 					var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
 					apply(next);
 					try { localStorage.setItem('theme', next); } catch (e) {}
+				});
+			})();
+		</script>
+		<script>
+			(function () {
+				var questions = document.querySelectorAll('.faq-question');
+				questions.forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						var expanded = btn.getAttribute('aria-expanded') === 'true';
+						btn.setAttribute('aria-expanded', String(!expanded));
+					});
 				});
 			})();
 		</script>
